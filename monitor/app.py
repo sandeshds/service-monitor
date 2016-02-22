@@ -1,27 +1,53 @@
 import sqlite3
-import sys
-from create_ui import build_ui
+import requests
+import json
 
-actions = {
-    'setup': lambda: start_setup(),
-    'monitor': lambda: start_monitoring()
-}
-
-def start_setup():
-	conn = sqlite3.connect(r"services.sqlite")
-	conn.execute('''CREATE TABLE if not exists SERVICES
-	       (ID INT PRIMARY KEY     NOT NULL,
-	       NAME           TEXT    NOT NULL,
-	       URL            INT     NOT NULL,
-	       DOWNTIME        CHAR(50));''')
-	build_ui()
-
-if __name__ == '__main__':
-    if len(sys.argv) < 2 or sys.argv[1] not in ['setup', 'monitor']:
-        print("Usage python main.py [setup|monitor]")
-        sys.exit(1)
-
-    actions[sys.argv[1]]()
+from utilities.httpService import HttpService
+from utilities.db import DbService
 
 
+class StartMonitoring:
+    def __init__(self):
+        self.http = HttpService("admin","district","")
+        self.db = DbService()
+        self.conn = sqlite3.connect(r"services.sqlite")
 
+    def write_service_up(self):
+        print "Status - works"
+
+
+    def write_service_down(self,serviceName,serviceUrl):
+        print "Status - Does not work"
+        self.db.insert_into_monitor(serviceName,serviceUrl,"Service is Down")
+        self.db.print_all_in_monitor()
+
+    def write_assertion_failed(self,serviceName,serviceUrl):
+        print "Status - Does not work"
+        self.db.insert_into_monitor(serviceName,serviceUrl,"Assertion Failed")
+        self.db.print_all_in_monitor()
+
+    def run(self):
+        with open('data/validations.json', 'r') as myfile:
+            service_and_urls = json.loads(myfile.read())
+
+        # service_and_urls = self.db.get_all_services_and_url()
+
+        for service in service_and_urls:
+            print "pinging service - " + service["serviceName"]
+            print "URL - " + service["URL"]
+            if service["validateOutput"] == False:
+                try:
+                    response = self.http.get(service["URL"])
+                    self.write_service_up()
+                except requests.exceptions.RequestException:
+                    self.write_service_down(service["serviceName"],service["URL"])
+
+            else:
+                try:
+                    response = self.http.get_and_verify(service["URL"],service["output"])
+                    if response == True:
+                        self.write_service_up()
+                    else:
+                        self.write_assertion_failed(service["serviceName"],service["URL"])
+                except requests.exceptions.RequestException:
+                    self.write_service_down(service["serviceName"],service["URL"])

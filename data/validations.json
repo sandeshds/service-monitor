@@ -1,0 +1,6 @@
+[{
+	"serviceName" : "DHIS",
+	"URL" : "https://play.dhis2.org/dev/api/users/DXyJmlo9rge.json?paging=false&fields=id,name",
+	"validateOutput" : true,
+	"output" : "Barness"
+}]

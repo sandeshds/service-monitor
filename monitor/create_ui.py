@@ -17,7 +17,7 @@ def build_ui():
     bottomFrame.pack(side=BOTTOM)
 
     def okCallBack():
-    	dbService.insert(1,serviceName.get(),URL.get(),"0")
+    	dbService.insert_into_services(1,serviceName.get(),URL.get())
     	dbService.print_all()
 
     def cancelCallBack():

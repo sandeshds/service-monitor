@@ -10,8 +10,15 @@ class HttpService:
         logging.getLogger("requests").setLevel(logging.WARNING)
 
     def get(self, url, params=None):
+        return requests.get("%s%s" % (self.service_url, url), auth=(self.username, self.password), params=params)
+
+    def get_and_verify(self, url, response_to_verify, params=None):
         response = requests.get("%s%s" % (self.service_url, url), auth=(self.username, self.password), params=params)
-        return response.json()
+        
+        if response_to_verify in str(response.content):
+            return True
+        else:
+            return False
 
     def post(self, url, data, should_fail=True, headers={'Content-type': 'application/json', 'Accept': 'text/plain'}):
         if type(data) is dict:
