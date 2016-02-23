@@ -1,6 +1,16 @@
 [{
-	"serviceName" : "DHIS",
-	"URL" : "https://play.dhis2.org/dev/api/users/DXyJmlo9rge.json?paging=false&fields=id,name",
+	"serviceName" : "Session",
+	"URL" : "http://ecsb-dev.kroger.com/sso/healthcheck",
 	"validateOutput" : true,
-	"output" : "Barness"
+	"output" : "VERSION"
+},{
+	"serviceName" : "ECSB Customer health check",
+	"URL" : "http://ecsb-dev.kroger.com/customer/healthcheck",
+	"validateOutput" : true,
+	"output" : "VERSION"
+},{
+	"serviceName" : "ECSB IDM",
+	"URL" : "http://ecsb-dev.kroger.com/id-management/healthcheck",
+	"validateOutput" : true,
+	"output" : "VERSION"
 }]

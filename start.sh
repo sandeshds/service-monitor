@@ -1,2 +1,2 @@
 #!/bin/sh
-PYTHONPATH=/Users/sandeshd/Documents/Projects/personal/service-monitor python monitor/main.py $1
+PYTHONPATH=$PWD python monitor/main.py $1
